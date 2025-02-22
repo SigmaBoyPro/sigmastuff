@@ -2028,9 +2028,9 @@ local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 
 function SendNotification(text)
     Notification:Notify(
-        {Title = "Infinity.hook", Description = "By Vac (@movedirection) - "..text},
-        {OutlineColor = Color3.fromRGB(0,0,69),Time = 3, Type = "image"},
-        {Image = "http://www.roblox.com/asset/?id=6023426923", ImageColor = Color3.fromRGB(0,0,69)}
+        {Title = "FrostByte.lua", Description = "Sheesh 🥶 - "..text},
+        {OutlineColor = Color3.fromRGB(0,0,180),Time = 3, Type = "image"},
+        {Image = "http://www.roblox.com/asset/?id=6023426923", ImageColor = Color3.fromRGB(0,0,180)}
     )
 end
 
@@ -2071,30 +2071,30 @@ getgenv().Settings = {
         LOCKTYPE = "Namecall",
         
         Resolver = {
-              Enabled = false,
-              Type = "None",
+            Enabled = false,
+            Type = "None",
         },
-        AutoAir = {
-             Enabled = false
-             AirDelay = 0.1,
+        Camera = {
+            Enabled = false,
+            HoodCustomsBypass = false,
         },
-       Camera = {
-        Enabled = false,
-        HoodCustomsBypass = false,
-     },
         OnHit = {
-             Enabled = true,
-             Hitchams = {
-                  Enabled = false,
-                  Color = Color3.fromRGB(0,0,180),
-                  Transparency = 0,
-                  Material = "ForceField",
-             },
-            Hitsound = {
-                  Enabled = false,
-                  Sound = "hitsounds/sparkle.wav",
-                  Volume = 2,
+            Enabled = true,
+            Hitchams = {
+                Enabled = false,
+                Color = Color3.fromRGB(0,0,180),
+                Transparency = 0,
+                Material = "ForceField",
             },
+            Hitsound = {
+                Enabled = false,
+                Sound = "hitsounds/sparkle.wav",
+                Volume = 2,
+            },
+        },
+        AutoAirshot = {
+            Enabled = false, -- Default to disabled
+            AirDelay = 0.1, -- Default delay
         }
     }
 }
@@ -2349,7 +2349,7 @@ SendNotification("Target: "..Plr.Character.Humanoid.DisplayName)
 
 function getClosestPlayerToCursor()
     local closestPlayer
-    local shortestDistance = getgenv().Settings.FrostByte.FOV
+    local shortestDistance = getgenv().Settings.FearLas.FOV
     local screenCenter = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
 
     for i, v in pairs(game.Players:GetPlayers()) do
@@ -2366,6 +2366,37 @@ function getClosestPlayerToCursor()
     end
     return closestPlayer
 end
+
+
+-- Auto Airshot Function
+local function AutoAirshot()
+    if getgenv().Settings.FrostByte.AutoAirshot.Enabled then
+        local Plr = getClosestPlayerToCursor()
+        
+        if Plr and Plr.Character then
+            local humanoid = Plr.Character:FindFirstChild("Humanoid")
+            local rootPart = Plr.Character:FindFirstChild("HumanoidRootPart")
+
+            if humanoid and humanoid.Health > 5 and rootPart and rootPart.Velocity.Y > 15 then
+                -- Temporarily disable AutoAirshot to prevent multiple activations
+                getgenv().Settings.FrostByte.AutoAirshot.Enabled = false 
+
+                task.wait(getgenv().Settings.FrostByte.AutoAirshot.AirDelay) -- Delay before activating
+
+                local Tool = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+                if Tool then
+                    Tool:Activate() -- Activate the tool
+                end
+                
+                -- Re-enable AutoAirshot after the delay
+                getgenv().Settings.FrostByte.AutoAirshot.Enabled = true 
+            end
+        end
+    end
+end
+
+-- Connect the Auto Airshot function to RenderStepped
+game:GetService("RunService").RenderStepped:Connect(AutoAirshot)
 
  
     local pingvalue = nil;
@@ -2562,32 +2593,6 @@ local HorizontalLookPosition = CFrame.new(CC.CFrame.p, Plr.Character[getgenv().S
             CC.CFrame = CC.CFrame:Lerp(HorizontalLookPosition, getgenv().HorizontalSmoothness)
     end
 end
-end)
---🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-RunService.RenderStepped:Connect(function()
-    if getgenv().Settings.FrostByte.AutoAir.Enabled then
-        local Plr = getClosestPlayerToCursor()
-
-        if Plr and Plr.Character then
-            local humanoid = Plr.Character:FindFirstChild("Humanoid")
-
-            if humanoid and humanoid.Health > 2 and ClosestPart.Velocity.Y > 15 then
-                -- Temporarily disable AutoAir to prevent multiple activations
-                getgenv().Settings.FrostByte.AutoAir.Enabled = false 
-
-                task.wait(getgenv().Settings.FrostByte.AutoAir.AirDelay) -- Delay before activating
-
-                local Tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                if Tool then
-                    Tool:Activate() -- Activate the tool
-                    
-                end
-                
-                -- Re-enable AutoAir after the delay
-                getgenv().Settings.FrostByte.AutoAir.Enabled = true 
-            end
-        end
-    end
 end)
 
     local mt = getrawmetatable(game)
@@ -2975,6 +2980,19 @@ PredTypeThing:Add("Yun")
 		end)
 		Swiitch:Set(false)
 
+local AutoAirshotToggle = Tab:AddSwitch("Auto Airshot", function(bool)
+    getgenv().Settings.FrostByte.AutoAirshot.Enabled = bool
+end)
+AutoAirshotToggle:Set(false) -- Default to disabled
+
+-- Add a text box for the AirDelay setting
+Tab:AddTextBox("Airshot Delay", function(text)
+    getgenv().Settings.FrostByte.AutoAirshot.AirDelay = tonumber(text) or 0.1
+end, 
+{
+    ["clear"] = false, -- Default: true (options are optional)
+})
+
 		local Droopdown = Teb:AddDropdown("Aim Bone", function(object)
 		getgenv().SelectedPart = object
 		end)
@@ -3100,26 +3118,6 @@ end,
 })
 local ActualMiscs = Tib:AddFolder("Others")
 ActualMiscs:AddLabel("Miscellaneous")
-ActualMiscs:AddButton("Auto Air", function()
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
-local ToggleButton2 = Instance.new("TextButton")
-ToggleButton2.Text = "Toggle Speed"
-ToggleButton2.Parent = ScreenGui
-ToggleButton2.BackgroundTransparency = 0.5
-ToggleButton2.BorderSizePixel = 0
-ToggleButton2.Position = UDim2.new(1, -120, 0, 55) -- Adjusted the position to top right corner
-ToggleButton2.Size = UDim2.new(0, 100, 0, 18)
-ToggleButton2.BackgroundColor3 = Color3.fromRGB(0, 0, 180)
-ToggleButton2.TextColor3 = Color3.fromRGB(255, 255, 255)
-local UICorner = Instance.new("UICorner")
-UICorner.Parent = ToggleButton2
-
-ToggleButton2.MouseButton1Click:Connect(onButtonClicked)
--- Your existing code modified for the GUI
-getgenv().Settings.FrostByte.AutoAir.Enabled = not getgenv().Settings.FrostByte.AutoAir.Enabled
-
 ActualMiscs:AddButton("CFrame Speed", function()
 -- Initial values
 getgenv().Speed = false
@@ -3135,7 +3133,7 @@ ToggleButton.BackgroundTransparency = 0.5
 ToggleButton.BorderSizePixel = 0
 ToggleButton.Position = UDim2.new(1, -120, 0, 55) -- Adjusted the position to top right corner
 ToggleButton.Size = UDim2.new(0, 100, 0, 18)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 180)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(48, 113, 169)
 ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 local UICorner = Instance.new("UICorner")
 UICorner.Parent = ToggleButton
