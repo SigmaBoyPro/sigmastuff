@@ -2028,9 +2028,9 @@ local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 
 function SendNotification(text)
     Notification:Notify(
-        {Title = "Infinity.hook", Description = "made by Vac (@movedirection) - "..text},
-        {OutlineColor = Color3.fromRGB(0,0,180),Time = 3, Type = "image"},
-        {Image = "http://www.roblox.com/asset/?id=6023426923", ImageColor = Color3.fromRGB(0,0,180)}
+        {Title = "Infinity.hook", Description = "By Vac (@movedirection) - "..text},
+        {OutlineColor = Color3.fromRGB(0,0,69),Time = 3, Type = "image"},
+        {Image = "http://www.roblox.com/asset/?id=6023426923", ImageColor = Color3.fromRGB(0,0,69)}
     )
 end
 
@@ -2071,30 +2071,26 @@ getgenv().Settings = {
         LOCKTYPE = "Namecall",
         
         Resolver = {
-            Enabled = false,
-            Type = "None",
+              Enabled = false,
+              Type = "None",
         },
-        Camera = {
-            Enabled = false,
-            HoodCustomsBypass = false,
-        },
+       Camera = {
+        Enabled = false,
+        HoodCustomsBypass = false,
+     },
         OnHit = {
-            Enabled = true,
-            Hitchams = {
-                Enabled = false,
-                Color = Color3.fromRGB(0,0,180),
-                Transparency = 0,
-                Material = "ForceField",
-            },
+             Enabled = true,
+             Hitchams = {
+                  Enabled = false,
+                  Color = Color3.fromRGB(0,0,180),
+                  Transparency = 0,
+                  Material = "ForceField",
+             },
             Hitsound = {
-                Enabled = false,
-                Sound = "hitsounds/sparkle.wav",
-                Volume = 2,
+                  Enabled = false,
+                  Sound = "hitsounds/sparkle.wav",
+                  Volume = 2,
             },
-        },
-        AutoAirshot = {
-            Enabled = false, -- Default to disabled
-            AirDelay = 0.1, -- Default delay
         }
     }
 }
@@ -2366,37 +2362,6 @@ function getClosestPlayerToCursor()
     end
     return closestPlayer
 end
-
-
--- Auto Airshot Function
-local function AutoAirshot()
-    if getgenv().Settings.FrostByte.AutoAirshot.Enabled then
-        local Plr = getClosestPlayerToCursor()
-        
-        if Plr and Plr.Character then
-            local humanoid = Plr.Character:FindFirstChild("Humanoid")
-            local rootPart = Plr.Character:FindFirstChild("HumanoidRootPart")
-
-            if humanoid and humanoid.Health > 5 and rootPart and rootPart.Velocity.Y > 15 then
-                -- Temporarily disable AutoAirshot to prevent multiple activations
-                getgenv().Settings.FrostByte.AutoAirshot.Enabled = false 
-
-                task.wait(getgenv().Settings.FrostByte.AutoAirshot.AirDelay) -- Delay before activating
-
-                local Tool = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
-                if Tool then
-                    Tool:Activate() -- Activate the tool
-                end
-                
-                -- Re-enable AutoAirshot after the delay
-                getgenv().Settings.FrostByte.AutoAirshot.Enabled = true 
-            end
-        end
-    end
-end
-
--- Connect the Auto Airshot function to RenderStepped
-game:GetService("RunService").RenderStepped:Connect(AutoAirshot)
 
  
     local pingvalue = nil;
@@ -2980,19 +2945,6 @@ PredTypeThing:Add("Yun")
 		end)
 		Swiitch:Set(false)
 
-local AutoAirshotToggle = Tab:AddSwitch("Auto Airshot", function(bool)
-    getgenv().Settings.FrostByte.AutoAirshot.Enabled = bool
-end)
-AutoAirshotToggle:Set(false) -- Default to disabled
-
--- Add a text box for the AirDelay setting
-Tab:AddTextBox("Airshot Delay", function(text)
-    getgenv().Settings.FrostByte.AutoAirshot.AirDelay = tonumber(text) or 0.1
-end, 
-{
-    ["clear"] = false, -- Default: true (options are optional)
-})
-
 		local Droopdown = Teb:AddDropdown("Aim Bone", function(object)
 		getgenv().SelectedPart = object
 		end)
@@ -3156,6 +3108,41 @@ end,
 {
 ["clear"] = false, -- Default: true (options are optional)
 })
+
+ActualMiscs:AddButton("Rightclick", function()
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "Corporations"
+ScreenGui.ResetOnSpawn = false -- Keep the GUI after respawn
+ScreenGui.Parent = PlayerGui
+
+local TextButton = Instance.new("TextButton")
+TextButton.Name = "Imperial"
+TextButton.Parent = ScreenGui
+TextButton.BackgroundColor3 = Color3.fromRGB(0,0,180)
+TextButton.BackgroundTransparency = 0.5
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(1, -120, 0, 10) -- Adjusted the position to top right corner
+TextButton.Size = UDim2.new(0, 100, 0, 18)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Rightclick"
+TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.TextSize = 18
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = TextButton
+
+-- Function to send the keybind
+local function OnButtonClick()
+    local vim = game:GetService("VirtualInputManager")
+    vim:SendKeyEvent(true, "ButtonL2", false, game)
+end
+
+-- Event connection
+TextButton.MouseButton1Click:Connect(OnButtonClick)
+end)
+
 local DelaySwitch = ActualMiscs:AddSwitch("No Delay", function(bool)
 	getgenv().NoDelay = bool
 end)
