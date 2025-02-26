@@ -1,3 +1,9 @@
+--[[
+	ui-engine-v2
+	version 1.3a
+	by Singularity (V3rm @ King Singularity) (Discord @ Singularity#5490)
+--]]
+
 local ui_options = {
 	main_color = Color3.fromRGB(41, 74, 122),
 	min_size = Vector2.new(400, 300),
@@ -2014,40 +2020,4 @@ function library:AddWindow(title, options)
 	end
 
 	return window_data, Window
-end
-
--- Lock
-local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
-local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
-
-function SendNotification(text)
-    Notification:Notify(
-        {Title = "Infinity.hook", Description = "by Vac (@movedirection) - "..text},
-        {OutlineColor = Color3.fromRGB(0,0,180),Time = 3, Type = "image"},
-        {Image = "http://www.roblox.com/asset/?id=6023426923", ImageColor = Color3.fromRGB(0,0,180)}
-    )
-end
-
-local hitsounds = {
-    {name = "hentai.wav", url = "https://github.com/tickcount/hitsounds/raw/master/hentai2.mp3"},    
-    {name = "amongus.wav", url = "https://github.com/tickcount/hitsounds/raw/master/amongus_kill.wav"},
-    {name = "bell.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/bell.wav?raw=true"},
-    {name = "bepis.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/bepis.wav?raw=true"},
-    {name = "bubble.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/bubble.wav?raw=true"},
-    {name = "cock.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/cock.wav?raw=true"},
-    {name = "cod.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/cod.wav?raw=true"},
-    {name = "fatality.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/fatality.wav?raw=true"},
-    {name = "phonk.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/phonk.wav?raw=true"},
-    {name = "sparkle.wav", url = "https://github.com/nyulachan/nyula/blob/main/Sounds/sparkle.wav?raw=true"}
-}
-
-if not isfolder("hitsounds") then
-    makefolder("hitsounds")
-end
-
-for _, sound in pairs(hitsounds) do
-    local path = "hitsounds" .. "/" .. sound.name
-    if not isfile(path) then
-        writefile(path, game:HttpGet(sound.url))
-    end
 end
